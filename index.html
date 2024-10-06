@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="./modules/jquery.min.js"></script>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+    <script src="./modules/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="./modules/bootstrap.min.css" rel="stylesheet">
+    <title>Urban Heat Island Analysis</title>
+    <style>
+        .embed-container {
+            position: relative;
+            padding-bottom: 80%;
+            height: 0;
+            max-width: 100%;
+        }
+        .embed-container iframe, .embed-container object, .embed-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <nav class="bg-gray-800">
+        <div class="container mx-auto">
+            <div class="flex justify-between items-center py-4">
+                <a href="#" class="text-white text-lg">UHI Analysis</a>
+                <ul class="flex space-x-4">
+                    <li><a href="#map" class="text-gray-300 hover:text-white">Map</a></li>
+                    <li><a href="#charts" class="text-gray-300 hover:text-white">Charts</a></li>
+                    <li><a href="#analysis" class="text-gray-300 hover:text-white">Analysis</a></li>
+                    <li><a href="#report" class="text-gray-300 hover:text-white">Report</a></li>
+                    <li><a href="#reference" class="text-gray-300 hover:text-white">Reference</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <div id="map-container" class="my-8">
+        <div class="embed-container">
+            <iframe width="500" height="400" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" 
+                title="Urban Heat Island Map" 
+                src="//kent.maps.arcgis.com/apps/Embed/index.html?webmap=850025a87b2f4cfd826ade0416dfd7fb&extent=-171.2109,-56.5393,171.2109,71.7579&zoom=true&previewImage=false&scale=true&disable_scroll=true&theme=light">
+            </iframe>
+        </div>
+    </div>
+    <script>
+        async function loadUHIData() {
+            // API request to your Python backend
+            try {
+                const response = await fetch('http://127.0.0.1:5000/process_uhi', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ uhi_geojson_path: 'data/UHI_data.geojson' })
+                });
+    
+                const data = await response.json();
+    
+                // Use the returned data (e.g., bounding box) to update your map
+                if (data.bounds) {
+                    console.log('UHI Bounding Box:', data.bounds);
+                    // Update your map or do further processing
+                } else {
+                    console.error('Error in UHI data:', data.error);
+                }
+    
+            } catch (error) {
+                console.error('Error fetching UHI data:', error);
+            }
+        }
+    
+        // Load UHI data once the page is loaded
+        document.addEventListener('DOMContentLoaded', loadUHIData);
+    </script>
+    
+    <div id="analysis" class="container mx-auto my-8">
+        <h2 class="text-2xl font-bold mb-4">Analysis</h2>
+        <p>This section will contain the analysis results related to UHI.</p>
+    </div>
+    
+    <div id="reference" class="container mx-auto my-8">
+        <h2 class="text-2xl font-bold mb-4">Reference</h2>
+        <p>This section will include references and data sources.</p>
+    </div>
+
+    <div id="charts" class="container mx-auto my-8">
+        <h2 class="text-2xl font-bold mb-4">Charts</h2>
+        <p>This section will display various charts related to the UHI analysis.</p>
+        <div id="charts-container">
+            <!-- Add charting library and code here -->
+        </div>
+    </div>
+
+    <div id="report" class="container mx-auto my-8">
+        <h2 class="text-2xl font-bold mb-4">Report</h2>
+        <p>This section will include detailed reports on the UHI analysis findings.</p>
+        <div id="report-container">
+            <!-- Add report content here -->
+        </div>
+    </div>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <script src="./map.js"></script>
+</body>
+</html>
